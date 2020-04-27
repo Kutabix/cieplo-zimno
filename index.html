@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Guess Number</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <base href="/" />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                background-color: #efefef;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            #container {
+                margin: 0 auto;
+                text-align: center;
+                margin-top: 10%;
+                border: 1px solid black;
+                width: 400px;
+                height: 60vh;
+                border-radius: 3%;
+            }
+
+            h2 {
+                text-align: center;
+                letter-spacing: 2px;
+                font-size: 26px;
+            }
+
+            input[type=text] {
+                text-align: center;
+                width: 80%;
+                height: 30px;
+                border-radius: 5px;
+                margin: 5px;
+                font-size: 20px;
+                outline: none;
+                padding: 20px;
+                box-sizing: border-box;
+                color: #666;
+                border: 2px solid #ddd;
+            }
+
+            input[type=submit] {
+                margin-top: 5px;
+                width: 80%;
+                height: 40px;
+                font-size: 24px;
+                outline: none;
+            }
+
+            #hint {
+                text-align: center;
+                width: 70%;
+                color: white;
+                background-color: rgb(241, 16, 16);
+                margin-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 15px;
+                border-radius: 7px;
+                cursor: default;
+            }
+            /* 
+                success:  rgb(45, 184, 91);
+                danger: rgb(241, 16, 16);
+            */
+            #your-guesses {
+                text-align: center;
+                width: 70%;
+                background-color: yellow;
+                margin-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 15px;
+                border-radius: 7px;
+            }
+
+            #counter {
+                text-align: center;
+                width: 70%;
+                height: 20px;
+                background-color: white;
+                margin-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                font-size: 24px;
+                padding: 15px;
+                border-radius: 7px;
+            }
+            
+            #reset-icon {
+                display: none;
+            }
+
+            .fa {
+                padding: 20px;
+                font-size: 48px;
+                width: 50px;
+                text-align: center;
+                color: black;
+                text-decoration: none;
+                transition: all 0.3s ease-in-out;
+                cursor: pointer;    
+            }
+
+            .fa:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+                transform: rotate(-180deg);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="headline">
+                <h2>Hot and Cold</h2>
+            </div>
+            <form>
+                <input type="text" id="input" placeholder="Guess number" autocomplete="off" />
+                <br>
+                <input type="submit" id="submit" value="guess!" />
+            </form>
+            <div id="hint"></div>
+            <div id="your-guesses"></div>
+            <div id="counter">0</div>
+            <div id="reset-icon">
+                <i class="fa fa-undo" onclick="location.reload()"></i>
+            </div>
+        </div>
+        <script>
+            const hint = document.getElementById('hint');
+            const submit = document.getElementById('submit');
+            const guesses = document.getElementById("your-guesses");
+            const counter = document.getElementById("counter");
+            const reset = document.getElementById("reset-icon");
+
+            const difference = (a, b) => Math.abs(a-b);
+
+            let guessesCounter = 0;
+
+            const trials = [];
+
+            const randomNumber = Math.floor(Math.random()*100)+1;
+
+            Number.prototype.belongsTo = function(a, b) {
+                if(this >= a && this <= b) return true;
+                return false;
+            }
+
+            const userHint = diff => {
+                if(diff.belongsTo(1, 5)) return 'Very hot';
+                if(diff.belongsTo(6,15)) return 'Hot';
+                if(diff.belongsTo(16, 25)) return 'Hotter'  
+                if(diff.belongsTo(26,40)) return 'Cold';
+                if(diff.belongsTo(41, 60)) return 'Very cold';
+                if(diff.belongsTo(61, 80)) return 'Freezing';
+                return 'Frosty';
+            }
+
+            submit.addEventListener('click', function handleClick(event) {
+                event.preventDefault(); 
+                const userInput = parseInt(document.getElementById('input').value);
+                if(typeof userInput === undefined || typeof userInput !== 'number' || isNaN(userInput)) { hint.innerHTML = 'Enter valid number'; return; }
+                document.getElementById('input').value = '';
+                if(hint.innerHTML !== '') hint.innerHTML = '';
+                if(userInput == randomNumber) {       
+                    guessesCounter++;
+                    counter.innerHTML = `#${guessesCounter}`;
+                    trials.push(userInput);
+                    guesses.innerHTML += trials[trials.length-1] + ", ";
+                    hint.innerHTML = "You won!";
+                    hint.style.backgroundColor = 'rgb(45, 184, 91)';
+                    reset.style.display = 'block';
+                    submit.removeEventListener('click', handleClick);
+                    submit.addEventListener('click', e => {
+                            e.preventDefault()
+                            anime({
+                                targets: '#hint',
+                                direction: 'alternate',
+                                duration: 400,
+                                scale: {
+                                    value: 1.2,
+                                    duration: 500,
+                                    easing: 'easeInOutQuart'
+                                },
+                                loop: 1,
+                            });
+                        }
+                    );
+                } else {
+                    guessesCounter++;
+                    counter.innerHTML = `#${guessesCounter}`;
+                    trials.push(userInput);
+                    guesses.innerHTML += `${trials[trials.length-1]}, `;
+                    hint.innerHTML = `${userHint(difference(userInput, randomNumber))}`;
+                }
+            });
+
+        </script>
+    </body>
+</html>
