@@ -121,10 +121,10 @@
     <body>
         <div id="container">
             <div id="headline">
-                <h2>Hot and Cold</h2>
+                <h2>Ciepło i zimno</h2>
             </div>
             <form>
-                <input type="text" id="input" placeholder="Guess number" autocomplete="off" />
+                <input type="text" id="input" placeholder="Zgadnij liczbę od 1 do 100" autocomplete="off" />
                 <br>
                 <input type="submit" id="submit" value="guess!" />
             </form>
@@ -156,19 +156,19 @@
             }
 
             const userHint = diff => {
-                if(diff.belongsTo(1, 5)) return 'Very hot';
-                if(diff.belongsTo(6,15)) return 'Hot';
-                if(diff.belongsTo(16, 25)) return 'Hotter'  
-                if(diff.belongsTo(26,40)) return 'Cold';
-                if(diff.belongsTo(41, 60)) return 'Very cold';
-                if(diff.belongsTo(61, 80)) return 'Freezing';
-                return 'Frosty';
+                if(diff.belongsTo(1, 5)) return 'Ekstremalnie gorąco';
+                if(diff.belongsTo(6,15)) return 'Bardziej gorąco';
+                if(diff.belongsTo(16, 25)) return 'Gorąco'  
+                if(diff.belongsTo(26,40)) return 'Zimno';
+                if(diff.belongsTo(41, 60)) return 'Bardzo cold';
+                if(diff.belongsTo(61, 80)) return 'Mroźno';
+                return 'Lodowato';
             }
 
             submit.addEventListener('click', function handleClick(event) {
                 event.preventDefault(); 
                 const userInput = parseInt(document.getElementById('input').value);
-                if(typeof userInput === undefined || typeof userInput !== 'number' || isNaN(userInput)) { hint.innerHTML = 'Enter valid number'; return; }
+                if(typeof userInput === undefined || typeof userInput !== 'number' || isNaN(userInput)) { hint.innerHTML = 'To nie jest liczba'; return; }
                 document.getElementById('input').value = '';
                 if(hint.innerHTML !== '') hint.innerHTML = '';
                 if(userInput == randomNumber) {       
@@ -176,7 +176,7 @@
                     counter.innerHTML = `#${guessesCounter}`;
                     trials.push(userInput);
                     guesses.innerHTML += trials[trials.length-1] + ", ";
-                    hint.innerHTML = "You won!";
+                    hint.innerHTML = "Wygrałeś!";
                     hint.style.backgroundColor = 'rgb(45, 184, 91)';
                     reset.style.display = 'block';
                     submit.removeEventListener('click', handleClick);
